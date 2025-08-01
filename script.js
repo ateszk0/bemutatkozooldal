@@ -1,3 +1,21 @@
+function openTab(tabId) {
+	// Hide all tab contents
+	document.querySelectorAll('.tab-content').forEach(tab => {
+		tab.style.display = 'none';
+	});
+            
+// Remove active class from all buttons
+document.querySelectorAll('.tab-btn').forEach(btn => {
+	btn.classList.remove('active');
+});
+            
+// Show the selected tab content
+document.getElementById(tabId).style.display = 'block';
+            
+// Add active class to clicked button
+event.currentTarget.classList.add('active');
+}
+
 // Mobile Navigation Toggle
 const hamburger = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.nav-links');
