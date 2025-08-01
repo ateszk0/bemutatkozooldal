@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kígyók kígyóznak - The game</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background: black;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    canvas {
+      border: 2px solid white;
+      margin-bottom: 10px;
+    }
+    #score {
+      color: white;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .controls {
+      display: grid;
+      grid-template-areas:
+        ". up ."
+        "left . right"
+        ". down .";
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn {
+      width: 60px;
+      height: 60px;
+      background: #333;
+      color: white;
+      border: 2px solid white;
+      border-radius: 10px;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    #up { grid-area: up; }
+    #left { grid-area: left; }
+    #right { grid-area: right; }
+    #down { grid-area: down; }
+  </style>
+</head>
+<body>
+  <div id="score">Apples eaten: 0</div>
+  <canvas width="600" height="600" id="game"></canvas>
+  
+  <div class="controls">
+    <div class="btn" id="up">↑</div>
+    <div class="btn" id="left">←</div>
+    <div class="btn" id="right">→</div>
+    <div class="btn" id="down">↓</div>
+  </div>
+
+<script>
+const canvas = document.getElementById('game');
+const context = canvas.getContext('2d');
+const grid = 15; // Slightly smaller grid for better mobile play
+const scoreElement = document.getElementById('score');
+
+let count = 0;
+let score = 0;
+
+const snake = {
+  x: 300,
+  y: 300,
+  dx: grid,
+  dy: 0,
+  cells: [],
+  maxCells: 4
+};
+
+// Two apples
+const apples = [
+  { x: 150, y: 150 },
+  { x: 450, y: 450 }
+];
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function updateScore() {
+  scoreElement.textContent = `Apples eaten: ${score}`;
+}
+
+function resetGame() {
+  snake.x = 300;
+  snake.y = 300;
+  snake.cells = [];
+  snake.maxCells = 4;
+  snake.dx = grid;
+  snake.dy = 0;
+  score = 0;
+  updateScore();
+  
+  apples[0] = { x: 150, y: 150 };
+  apples[1] = { x: 450, y: 450 };
+}
+
+function loop() {
+  requestAnimationFrame(loop);
+  
+  // Game speed (higher = slower)
+  if (++count < 8) return;
+  count = 0;
+  
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Move snake
+  snake.x += snake.dx;
+  snake.y += snake.dy;
+  
+  // Wall collision = wrap around
+  if (snake.x < 0) snake.x = canvas.width - grid;
+  if (snake.x >= canvas.width) snake.x = 0;
+  if (snake.y < 0) snake.y = canvas.height - grid;
+  if (snake.y >= canvas.height) snake.y = 0;
+  
+  // Track movement
+  snake.cells.unshift({x: snake.x, y: snake.y});
+  if (snake.cells.length > snake.maxCells) {
+    snake.cells.pop();
+  }
+  
+  // Draw apples
+  context.fillStyle = 'red';
+  apples.forEach(apple => {
+    context.fillRect(apple.x, apple.y, grid-1, grid-1);
+  });
+  
+  // Draw snake
+  context.fillStyle = 'lime';
+  snake.cells.forEach((cell, index) => {
+    context.fillRect(cell.x, cell.y, grid-1, grid-1);
+    
+    // Check apple collision
+    apples.forEach((apple, i) => {
+      if (cell.x === apple.x && cell.y === apple.y) {
+        snake.maxCells++;
+        score++;
+        updateScore();
+        apples[i] = {
+          x: getRandomInt(0, canvas.width/grid) * grid,
+          y: getRandomInt(0, canvas.height/grid) * grid
+        };
+      }
+    });
+    
+    // Check self collision
+    for (let i = index + 1; i < snake.cells.length; i++) {
+      if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+        resetGame();
+      }
+    }
+  });
+}
+
+// Keyboard controls
+document.addEventListener('keydown', e => {
+  if (e.which === 37 && snake.dx === 0) { // Left
+    snake.dx = -grid;
+    snake.dy = 0;
+  }
+  else if (e.which === 38 && snake.dy === 0) { // Up
+    snake.dy = -grid;
+    snake.dx = 0;
+  }
+  else if (e.which === 39 && snake.dx === 0) { // Right
+    snake.dx = grid;
+    snake.dy = 0;
+  }
+  else if (e.which === 40 && snake.dy === 0) { // Down
+    snake.dy = grid;
+    snake.dx = 0;
+  }
+});
+
+// Touch controls
+document.getElementById('up').addEventListener('click', () => {
+  if (snake.dy === 0) {
+    snake.dy = -grid;
+    snake.dx = 0;
+  }
+});
+document.getElementById('left').addEventListener('click', () => {
+  if (snake.dx === 0) {
+    snake.dx = -grid;
+    snake.dy = 0;
+  }
+});
+document.getElementById('right').addEventListener('click', () => {
+  if (snake.dx === 0) {
+    snake.dx = grid;
+    snake.dy = 0;
+  }
+});
+document.getElementById('down').addEventListener('click', () => {
+  if (snake.dy === 0) {
+    snake.dy = grid;
+    snake.dx = 0;
+  }
+});
+
+// Start game
+resetGame();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
