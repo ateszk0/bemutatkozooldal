@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nagy Attila | Tapasztalat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="stars"></div>
+        <div class="stars2"></div>
+        <div class="stars3"></div>
+        <div class="stars4"></div>
+    </div>
+
+    <div id="particles-js"></div>
+
+    <header class="glass-nav">
+        <nav>
+            <div class="logo">
+                <a href="index.html">
+                    <span class="logo-icon"><i class="fas fa-code"></i></span>
+                    <span class="logo-text">ATISN</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="about.html" class="nav-link hover-underline-animation">
+                    <span class="nav-icon"><i class="fas fa-user"></i></span>
+                    <span class="nav-text">Rólam</span>
+                </a>
+                <a href="experience.html" class="nav-link hover-underline-animation active">
+                    <span class="nav-icon"><i class="fas fa-briefcase"></i></span>
+                    <span class="nav-text">Tapasztalat</span>
+                </a>
+                <a href="skills.html" class="nav-link hover-underline-animation">
+                    <span class="nav-icon"><i class="fas fa-laptop-code"></i></span>
+                    <span class="nav-text">Készségek</span>
+                </a>
+                <a href="contact.html" class="nav-link hover-underline-animation">
+                    <span class="nav-icon"><i class="fas fa-envelope"></i></span>
+                    <span class="nav-text">Kapcsolat</span>
+                </a>
+            </div>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="experience-section">
+            <div class="section-header">
+				<div class="header-spacer" style="height: 70px;"></div>
+                <h1 class="section-title">Tapasztalat</h1>
+                <div class="section-divider"></div>
+                <p class="section-subtitle">Egyetemi projektek és szakmai fejlődés</p>
+            </div>
+
+            <div class="experience-tabs">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="openTab('projects')">Projektek</button>
+                    <button class="tab-btn" onclick="openTab('education')">Tanulmányok</button>
+                </div>
+
+                <div class="tab-content" id="projects" style="display: block;">
+                    <div class="project-grid">
+                        <div class="project-card">
+                            <div class="project-header">
+                                <i class="fas fa-database project-icon"></i>
+                                <h3 class="project-title">Könyvtári Rendszer</h3>
+                            </div>
+                            <div class="project-body">
+                                <p class="project-description">
+                                    Teljes körű adatbázisrendszer tervezése és megvalósítása SQL segítségével, amely egy könyvtári rendszert modellez.
+                                </p>
+                                <ul class="project-tech">
+                                    <li>MySQL</li>
+                                    <li>Python</li>
+                                    <li>Flask</li>
+                                </ul>
+                            </div>
+                            <div class="project-footer">
+                                <span class="project-date">2024 március</span>
+                                <a href="#" class="project-link">Részletek <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="project-card">
+                            <div class="project-header">
+                                <i class="fas fa-globe project-icon"></i>
+                                <h3 class="project-title">Portfólió Weboldal</h3>
+                            </div>
+                            <div class="project-body">
+                                <p class="project-description">
+                                    Reszponzív weboldal készítése HTML, CSS és JavaScript használatával, amely bemutatja a frontend fejlesztés alapjait.
+                                </p>
+                                <ul class="project-tech">
+                                    <li>HTML5</li>
+                                    <li>CSS3</li>
+                                    <li>JavaScript</li>
+                                </ul>
+                            </div>
+                            <div class="project-footer">
+                                <span class="project-date">2024 január</span>
+                                <a href="#" class="project-link">Részletek <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="project-card">
+                            <div class="project-header">
+                                <i class="fas fa-network-wired project-icon"></i>
+                                <h3 class="project-title">Hálózati Szimuláció</h3>
+                            </div>
+                            <div class="project-body">
+                                <p class="project-description">
+                                    Hálózati topológiák modellezése és tesztelése Cisco Packet Tracer segítségével, különböző konfigurációs forgatókönyvek alkalmazásával.
+                                </p>
+                                <ul class="project-tech">
+                                    <li>Cisco Packet Tracer</li>
+                                    <li>TCP/IP</li>
+                                    <li>LAN/WAN</li>
+                                </ul>
+                            </div>
+                            <div class="project-footer">
+                                <span class="project-date">2023 november</span>
+                                <a href="#" class="project-link">Részletek <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="education" style="display: none;">
+                    <div class="education-timeline">
+                        <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2024 - Jelenleg</div>
+                        <div class="timeline-content">
+                            <h3>Bprof Üzemmérnök-Informatika</h3>
+                            <p>Budapesti Műszaki és Gazdaságtudományi Egyetem</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2019 - 2024</div>
+                        <div class="timeline-content">
+                            <h3>Érettségi</h3>
+                            <p>Kispesti Deák Ferenc Gimnázium</p>
+                        </div>
+                    </div>
+					<div class="timeline-item">
+                        <div class="timeline-date">2011 - 2019</div>
+                        <div class="timeline-content">
+                            <h3>Általános Iskola</h3>
+                            <p>Kispesti Bolyai János általános iskola</p>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="glass-footer">
+        <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+        </div>
+        <p class="copyright">&copy; 2025 <span>atisn.com</span> | Minden jog fenntartva</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Tab functionality
+        function openTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show the selected tab content
+            document.getElementById(tabId).style.display = 'block';
+            
+            // Add active class to clicked button
+            event.currentTarget.classList.add('active');
+        }
+
+        // Mobile Navigation Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Particles.js Configuration
+        if (document.getElementById('particles-js')) {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#3b82f6"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.5,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 2,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#3b82f6",
+                        "opacity": 0.3,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 1,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": true,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+        }
+
+        // Animate elements when they come into view
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.project-card, .timeline-item');
+            
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if (elementPosition < screenPosition) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        };
+
+        // Set initial state for animation
+        window.addEventListener('load', () => {
+            const animateElements = document.querySelectorAll('.project-card, .timeline-item');
+            
+            animateElements.forEach(element => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            });
+            
+            setTimeout(() => {
+                animateOnScroll();
+            }, 300);
+        });
+
+        window.addEventListener('scroll', animateOnScroll);
+    </script>
+</body>
+</html>
