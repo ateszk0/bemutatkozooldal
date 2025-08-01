@@ -1,222 +1,321 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Kígyók kígyóznak - The game</title>
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
-    body {
-      background: black;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    canvas {
-      border: 2px solid white;
-      margin-bottom: 10px;
-    }
-    #score {
-      color: white;
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-    .controls {
-      display: grid;
-      grid-template-areas:
-        ". up ."
-        "left . right"
-        ". down .";
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .btn {
-      width: 60px;
-      height: 60px;
-      background: #333;
-      color: white;
-      border: 2px solid white;
-      border-radius: 10px;
-      font-size: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      user-select: none;
-    }
-    #up { grid-area: up; }
-    #left { grid-area: left; }
-    #right { grid-area: right; }
-    #down { grid-area: down; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cigo memo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eeeee4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            width: 600px;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(6, 100px);
+            grid-gap: 10px;
+            perspective: 1000px;
+        }
+        
+        .card {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+        
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card.matched {
+            transform: rotateY(180deg);
+            cursor: default;
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-front {
+            background: linear-gradient(45deg, #063970, #abdbe3);
+            transform: rotateY(180deg);
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, #76b5c5, #154c79);
+            font-size: 24px;
+            color: white;
+        }
+        
+        .card-front img {
+            width: 90%;
+            height: 90%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .win-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 36px;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        
+        .win-message.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .win-message button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: #6e8efb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .win-message button:hover {
+            background-color: #5a7df0;
+        }
+        
+        @keyframes matchAnimation {
+            0% { transform: rotateY(180deg) scale(1); }
+            50% { transform: rotateY(180deg) scale(1.1); }
+            100% { transform: rotateY(180deg) scale(1); }
+        }
+        
+        .card.matched .card-front {
+            animation: matchAnimation 0.5s ease-in-out;
+        }
+    </style>
 </head>
 <body>
-  <div id="score">Apples eaten: 0</div>
-  <canvas width="600" height="600" id="game"></canvas>
-  
-  <div class="controls">
-    <div class="btn" id="up">↑</div>
-    <div class="btn" id="left">←</div>
-    <div class="btn" id="right">→</div>
-    <div class="btn" id="down">↓</div>
-  </div>
-
-<script>
-const canvas = document.getElementById('game');
-const context = canvas.getContext('2d');
-const grid = 15; // Slightly smaller grid for better mobile play
-const scoreElement = document.getElementById('score');
-
-let count = 0;
-let score = 0;
-
-const snake = {
-  x: 300,
-  y: 300,
-  dx: grid,
-  dy: 0,
-  cells: [],
-  maxCells: 4
-};
-
-// Two apples
-const apples = [
-  { x: 150, y: 150 },
-  { x: 450, y: 450 }
-];
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-function updateScore() {
-  scoreElement.textContent = `Apples eaten: ${score}`;
-}
-
-function resetGame() {
-  snake.x = 300;
-  snake.y = 300;
-  snake.cells = [];
-  snake.maxCells = 4;
-  snake.dx = grid;
-  snake.dy = 0;
-  score = 0;
-  updateScore();
-  
-  apples[0] = { x: 150, y: 150 };
-  apples[1] = { x: 450, y: 450 };
-}
-
-function loop() {
-  requestAnimationFrame(loop);
-  
-  // Game speed (higher = slower)
-  if (++count < 8) return;
-  count = 0;
-  
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  
-  // Move snake
-  snake.x += snake.dx;
-  snake.y += snake.dy;
-  
-  // Wall collision = wrap around
-  if (snake.x < 0) snake.x = canvas.width - grid;
-  if (snake.x >= canvas.width) snake.x = 0;
-  if (snake.y < 0) snake.y = canvas.height - grid;
-  if (snake.y >= canvas.height) snake.y = 0;
-  
-  // Track movement
-  snake.cells.unshift({x: snake.x, y: snake.y});
-  if (snake.cells.length > snake.maxCells) {
-    snake.cells.pop();
-  }
-  
-  // Draw apples
-  context.fillStyle = 'red';
-  apples.forEach(apple => {
-    context.fillRect(apple.x, apple.y, grid-1, grid-1);
-  });
-  
-  // Draw snake
-  context.fillStyle = 'lime';
-  snake.cells.forEach((cell, index) => {
-    context.fillRect(cell.x, cell.y, grid-1, grid-1);
+    <h1>Cintanyer memo gameszko</h1>
+    <div class="game-info">
+        <div>Lépések: <span id="moves">0</span></div>
+        <div>Párok: <span id="matches">0</span>/9</div>
+    </div>
+    <div class="game-board" id="gameBoard"></div>
     
-    // Check apple collision
-    apples.forEach((apple, i) => {
-      if (cell.x === apple.x && cell.y === apple.y) {
-        snake.maxCells++;
-        score++;
-        updateScore();
-        apples[i] = {
-          x: getRandomInt(0, canvas.width/grid) * grid,
-          y: getRandomInt(0, canvas.height/grid) * grid
-        };
-      }
-    });
-    
-    // Check self collision
-    for (let i = index + 1; i < snake.cells.length; i++) {
-      if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
-        resetGame();
-      }
-    }
-  });
-}
+    <div class="win-message" id="winMessage">
+        <h2>GG!</h2>
+        <p>Nyertél <span id="finalMoves">0</span> lépésből!</p>
+        <button id="playAgain">Megin</button>
+    </div>
 
-// Keyboard controls
-document.addEventListener('keydown', e => {
-  if (e.which === 37 && snake.dx === 0) { // Left
-    snake.dx = -grid;
-    snake.dy = 0;
-  }
-  else if (e.which === 38 && snake.dy === 0) { // Up
-    snake.dy = -grid;
-    snake.dx = 0;
-  }
-  else if (e.which === 39 && snake.dx === 0) { // Right
-    snake.dx = grid;
-    snake.dy = 0;
-  }
-  else if (e.which === 40 && snake.dy === 0) { // Down
-    snake.dy = grid;
-    snake.dx = 0;
-  }
-});
-
-// Touch controls
-document.getElementById('up').addEventListener('click', () => {
-  if (snake.dy === 0) {
-    snake.dy = -grid;
-    snake.dx = 0;
-  }
-});
-document.getElementById('left').addEventListener('click', () => {
-  if (snake.dx === 0) {
-    snake.dx = -grid;
-    snake.dy = 0;
-  }
-});
-document.getElementById('right').addEventListener('click', () => {
-  if (snake.dx === 0) {
-    snake.dx = grid;
-    snake.dy = 0;
-  }
-});
-document.getElementById('down').addEventListener('click', () => {
-  if (snake.dy === 0) {
-    snake.dy = grid;
-    snake.dx = 0;
-  }
-});
-
-// Start game
-resetGame();
-requestAnimationFrame(loop);
-</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Game state
+            let cards = [];
+            let hasFlippedCard = false;
+            let lockBoard = false;
+            let firstCard, secondCard;
+            let moves = 0;
+            let matches = 0;
+            
+            // Image URLs - REPLACE THESE WITH YOUR OWN IMAGES
+            const cardImages = [
+                '1.jpg',
+                '2.jpg',
+                '3.png',
+                '4.jpg',
+                '5.jpg',
+                '6.jpg',
+                '7.jpg',
+                '8.jpg',
+                '9.jpg',
+            ];
+            
+            // Duplicate the images to create pairs
+            const cardDeck = [...cardImages, ...cardImages];
+            
+            // Shuffle function
+            function shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+            
+            // Create cards
+            function createBoard() {
+                const gameBoard = document.getElementById('gameBoard');
+                gameBoard.innerHTML = '';
+                cards = [];
+                moves = 0;
+                matches = 0;
+                updateMoves();
+                updateMatches();
+                
+                const shuffledCards = shuffle(cardDeck);
+                
+                for (let i = 0; i < shuffledCards.length; i++) {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+                    
+                    const cardFront = document.createElement('div');
+                    cardFront.classList.add('card-face', 'card-front');
+                    const img = document.createElement('img');
+                    img.src = shuffledCards[i];
+                    img.alt = `Card ${i}`;
+                    cardFront.appendChild(img);
+                    
+                    const cardBack = document.createElement('div');
+                    cardBack.classList.add('card-face', 'card-back');
+                    cardBack.textContent = '?';
+                    
+                    card.appendChild(cardFront);
+                    card.appendChild(cardBack);
+                    
+                    card.addEventListener('click', flipCard);
+                    
+                    gameBoard.appendChild(card);
+                    cards.push(card);
+                }
+            }
+            
+            // Flip card
+            function flipCard() {
+                if (lockBoard) return;
+                if (this === firstCard) return;
+                if (this.classList.contains('matched')) return;
+                
+                this.classList.add('flipped');
+                
+                if (!hasFlippedCard) {
+                    // First click
+                    hasFlippedCard = true;
+                    firstCard = this;
+                    return;
+                }
+                
+                // Second click
+                secondCard = this;
+                moves++;
+                updateMoves();
+                checkForMatch();
+            }
+            
+            // Check for match
+            function checkForMatch() {
+                const firstImg = firstCard.querySelector('img').src;
+                const secondImg = secondCard.querySelector('img').src;
+                
+                if (firstImg === secondImg) {
+                    // Match found
+                    disableCards();
+                    matches++;
+                    updateMatches();
+                    
+                    if (matches === cardImages.length) {
+                        setTimeout(() => {
+                            showWinMessage();
+                        }, 1000);
+                    }
+                } else {
+                    // No match
+                    unflipCards();
+                }
+            }
+            
+            // Disable matched cards
+            function disableCards() {
+                firstCard.classList.add('matched');
+                secondCard.classList.add('matched');
+                
+                firstCard.removeEventListener('click', flipCard);
+                secondCard.removeEventListener('click', flipCard);
+                
+                resetBoard();
+            }
+            
+            // Unflip cards
+            function unflipCards() {
+                lockBoard = true;
+                
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    secondCard.classList.remove('flipped');
+                    
+                    resetBoard();
+                }, 1000);
+            }
+            
+            // Reset board state
+            function resetBoard() {
+                [hasFlippedCard, lockBoard] = [false, false];
+                [firstCard, secondCard] = [null, null];
+            }
+            
+            // Update moves counter
+            function updateMoves() {
+                document.getElementById('moves').textContent = moves;
+            }
+            
+            // Update matches counter
+            function updateMatches() {
+                document.getElementById('matches').textContent = matches;
+            }
+            
+            // Show win message
+            function showWinMessage() {
+                document.getElementById('finalMoves').textContent = moves;
+                document.getElementById('winMessage').classList.add('show');
+            }
+            
+            // Play again
+            document.getElementById('playAgain').addEventListener('click', () => {
+                document.getElementById('winMessage').classList.remove('show');
+                createBoard();
+            });
+            
+            // Initialize the game
+            createBoard();
+        });
+    </script>
 </body>
 </html>
